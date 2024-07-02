@@ -1,0 +1,44 @@
+/*Load data*/
+data bodyfat;
+infile "/home/u63887040/My Data/bodyfat.dat";
+input tricep thigh midarm fat;
+run;
+
+/*Generate summary statitics and check for abnormal observations*/
+proc means data = bodyfat;
+run;
+/*There does not appear to be any abnormal observations or outliers*/
+
+/*Check for multicollinearity issues with correlation matrix*/
+proc corr data = bodyfat;
+var tricep thigh midarm fat;
+run;
+/*While the predictor variables, tricep and thigh, are showing high 
+correlation with one another, with a coeficient of 0.9233 and a p-value <0.0001, both 
+varibles will included 
+in the model as this is to be expected. */
+
+/*Create linnear regression model*/
+proc reg data = bodyfat;
+model fat = tricep thigh midarm;
+run;
+quit;
+
+/*From the results, we can see that approximately 76%(adj R-Squared Value) of the 
+variance within the response variable(fat) can
+be explained by this model.  However, given each predictor variable's 
+large p-value which is greater than 0.05,
+none of them can be said to be statistically significant.  
+
+/*Visualize relationships with matrix scatter plots*/
+proc sgscatter data = bodyfat;
+matrix tricep thigh midarm fat /
+diagonal = (histogram normal);
+run;
+
+
+
+
+
+
+
